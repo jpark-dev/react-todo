@@ -3,7 +3,6 @@ import { useRecoilValue, useSetRecoilState } from "recoil";
 import { categoriesState, ToDos, toDoState } from "./atoms";
 
 function ToDo({ text, category, id }: ToDos) {
-  console.log("todo cat prop", category);
   const categories = useRecoilValue(categoriesState);
   const setToDos = useSetRecoilState(toDoState);
   const onClick = (e: React.MouseEvent<HTMLButtonElement>) => {

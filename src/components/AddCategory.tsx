@@ -9,10 +9,11 @@ interface NewCategory {
 function AddCategory() {
   const setCategories = useSetRecoilState(categoriesState);
   const setCategory = useSetRecoilState(categoryState);
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, setValue } = useForm();
   const handleValid = ({ newCategory }: any) => {
     setCategories((prev) => [...prev, newCategory]);
     setCategory(newCategory);
+    setValue("newCategory", "");
   };
 
   return (
