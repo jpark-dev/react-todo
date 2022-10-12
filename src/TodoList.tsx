@@ -23,7 +23,12 @@ import { useForm } from "react-hook-form";
 // }
 
 interface FormData {
-  [key: string]: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  extraError?: string;
 }
 
 function ToDoList() {
@@ -31,12 +36,21 @@ function ToDoList() {
     register,
     handleSubmit,
     formState: { errors },
+    setError,
   } = useForm<FormData>({
     defaultValues: {
       email: "@naver.com",
     },
   });
-  const onValid = (data: any) => {
+  const onValid = (data: FormData) => {
+    if (data.password !== data.confirmPassword) {
+      setError(
+        "password",
+        { message: "Passwords are not the same" },
+        { shouldFocus: true }
+      );
+    }
+    setError("extraError", { message: "Check if you are online." });
     console.log("data", data);
   };
 
@@ -47,7 +61,20 @@ function ToDoList() {
         onSubmit={handleSubmit(onValid)}
       >
         <input
-          {...register("firstName", { required: "required", minLength: 6 })}
+          {...register("firstName", {
+            required: "required",
+            validate: {
+              noJason: (v) =>
+                v.toLowerCase().includes("jason")
+                  ? "jason is a reserved name"
+                  : true,
+              noAmy: (v) =>
+                v.toLowerCase().includes("amy")
+                  ? "amy is a reserved name"
+                  : true,
+            },
+            minLength: 6,
+          })}
           placeholder="First Name"
         />
         <span>{errors?.firstName?.message}</span>
@@ -79,11 +106,14 @@ function ToDoList() {
         />
         <span>{errors?.password?.message}</span>
         <input
-          {...register("height", { required: "height too short" })}
-          placeholder="height"
+          {...register("confirmPassword", {
+            required: "Please confirm your password.",
+          })}
+          placeholder="Confirm Password"
         />
-        <span>{errors?.height?.message}</span>
+        <span>{errors?.confirmPassword?.message}</span>
         <button>Add</button>
+        <span>{errors?.extraError?.message}</span>
       </form>
     </div>
   );
