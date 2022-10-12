@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 
 // function ToDoList() {
@@ -23,8 +22,20 @@ import { useForm } from "react-hook-form";
 //   );
 // }
 
+interface FormData {
+  [key: string]: string;
+}
+
 function ToDoList() {
-  const { register, handleSubmit, formState } = useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormData>({
+    defaultValues: {
+      email: "@naver.com",
+    },
+  });
   const onValid = (data: any) => {
     console.log("data", data);
   };
@@ -36,22 +47,42 @@ function ToDoList() {
         onSubmit={handleSubmit(onValid)}
       >
         <input
-          {...register("First Name", { required: true })}
+          {...register("firstName", { required: "required", minLength: 6 })}
           placeholder="First Name"
         />
+        <span>{errors?.firstName?.message}</span>
         <input
-          {...register("Last Name", { required: true })}
+          {...register("lastName", {
+            required: true,
+            minLength: {
+              value: 6,
+              message: "Your last name is too short.",
+            },
+          })}
           placeholder="Last Name"
         />
-        <input {...register("Email", { required: true })} placeholder="Email" />
+        <span>{errors?.lastName?.message}</span>
         <input
-          {...register("Password", { required: true, minLength: 10 })}
+          {...register("email", {
+            required: true,
+            pattern: {
+              value: /^[A-Za-z0-9._%+-]+@naver.com$/,
+              message: "Only Naver emails",
+            },
+          })}
+          placeholder="Email"
+        />
+        <span>{errors?.email?.message}</span>
+        <input
+          {...register("password", { required: true, minLength: 10 })}
           placeholder="Password"
         />
+        <span>{errors?.password?.message}</span>
         <input
           {...register("height", { required: "height too short" })}
           placeholder="height"
         />
+        <span>{errors?.height?.message}</span>
         <button>Add</button>
       </form>
     </div>
